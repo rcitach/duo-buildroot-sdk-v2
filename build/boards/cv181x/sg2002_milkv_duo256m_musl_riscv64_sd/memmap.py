@@ -13,12 +13,12 @@ class MemoryMap:
     DRAM_SIZE = 256 * SIZE_1M
 
     # ==============
-    # C906L FreeRTOS
+    # C906L RTOS
     # ==============
-    FREERTOS_SIZE = 2 * SIZE_1M
-    # FreeRTOS is at the end of DRAM
-    FREERTOS_ADDR = DRAM_BASE + DRAM_SIZE - FREERTOS_SIZE
-    FSBL_C906L_START_ADDR = FREERTOS_ADDR
+    RTOS_SIZE = 2 * SIZE_1M
+    # RTOS is at the end of DRAM
+    RTOS_ADDR = DRAM_BASE + DRAM_SIZE - RTOS_SIZE
+    FSBL_C906L_START_ADDR = RTOS_ADDR
 
     # ==============================
     # OpenSBI | arm-trusted-firmware
@@ -33,21 +33,21 @@ class MemoryMap:
     # =========================
     # memory@DRAM_BASE in .dts.
     # =========================
-    # Ignore the area of FreeRTOS in u-boot and kernel
+    # Ignore the area of RTOS in u-boot and kernel
     KERNEL_MEMORY_ADDR = DRAM_BASE
-    KERNEL_MEMORY_SIZE = DRAM_SIZE - FREERTOS_SIZE
+    KERNEL_MEMORY_SIZE = DRAM_SIZE - RTOS_SIZE
 
     # =================
-    # Multimedia buffer. Used by u-boot/kernel/FreeRTOS
+    # Multimedia buffer. Used by u-boot/kernel/RTOS
     # =================
     ION_SIZE = 75 * SIZE_1M
     H26X_BITSTREAM_SIZE = 2 * SIZE_1M
     H26X_ENC_BUFF_SIZE = 0
     ISP_MEM_BASE_SIZE = 20 * SIZE_1M
-    FREERTOS_RESERVED_ION_SIZE = H26X_BITSTREAM_SIZE + H26X_ENC_BUFF_SIZE + ISP_MEM_BASE_SIZE
+    RTOS_RESERVED_ION_SIZE = H26X_BITSTREAM_SIZE + H26X_ENC_BUFF_SIZE + ISP_MEM_BASE_SIZE
 
-    # ION after FreeRTOS
-    ION_ADDR = FREERTOS_ADDR - ION_SIZE
+    # ION after RTOS
+    ION_ADDR = RTOS_ADDR - ION_SIZE
 
     # Buffers of the fast image are inside the ION buffer
     H26X_BITSTREAM_ADDR = ION_ADDR

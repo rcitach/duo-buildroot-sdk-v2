@@ -7,7 +7,7 @@
 #include <rom_api.h>
 #include <cpu.h>
 enum CHIP_CLK_MODE chip_clk_mode = CLK_ND;
-#ifdef RTOS_ENABLE_FREERTOS
+#if defined(RTOS_ENABLE_FREERTOS) || defined(RTOS_ENABLE_RTTHREAD)
 int init_comm_info(int ret)
 {
 	struct transfer_config_t *transfer_config = (struct transfer_config_t *)MAILBOX_FIELD;

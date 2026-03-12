@@ -91,6 +91,24 @@ def mmap_to_h(mlist):
     )
     return conf
 
+def add_rtos_entries(mlist, rtos):
+    """Rename RTOS placeholder keys based on selected RTOS."""
+
+    old_rtos_prefix = MEMMAP_PREFIX + "RTOS"
+    rtos_prefix = MEMMAP_PREFIX + rtos.upper()
+
+    to_duplicate = []
+
+    for key in mlist:
+        if key.startswith(old_rtos_prefix):
+            suffix = key[len(old_rtos_prefix):]
+            new_key = rtos_prefix + suffix
+            to_duplicate.append((new_key, mlist[key]))
+
+    for new_key, value in to_duplicate:
+        mlist[new_key] = value
+
+    return mlist
 
 def main():
     logging.basicConfig(
@@ -99,6 +117,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Generate mmap.h")
     parser.add_argument("--type", choices=["h", "conf", "ld"], required=True)
+    parser.add_argument("--rtos", choices=["none","freertos", "rtthread"], required=True)
     parser.add_argument("MAP_FILE", type=str, nargs=1)
     parser.add_argument("OUTPUT", type=str, nargs=1)
     args = parser.parse_args()
@@ -113,6 +132,9 @@ def main():
     spec.loader.exec_module(mmap_module)
 
     mlist = parse_mmap(mmap_module)
+
+    # Add RTOS-specific entries based on selected RTOS
+    mlist = add_rtos_entries(mlist, args.rtos)
 
     if args.type == "h":
         out = mmap_to_h(mlist)

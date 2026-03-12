@@ -8,8 +8,8 @@
 	fast_image {
 		compatible = "cvitek,rtos_image";
 		reg-names = "rtos_region";
-		reg = <0x0 CVIMMAP_FREERTOS_ADDR 0x0 CVIMMAP_FREERTOS_SIZE>;
-		ion-size = <CVIMMAP_FREERTOS_RESERVED_ION_SIZE>;	//reserved ion size for freertos
+		reg = <0x0 CVIMMAP_RTOS_ADDR 0x0 CVIMMAP_RTOS_SIZE>;
+		ion-size = <CVIMMAP_RTOS_RESERVED_ION_SIZE>;	//reserved ion size for freertos
 	};
 
 	reserved-memory {

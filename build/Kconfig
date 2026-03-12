@@ -605,6 +605,13 @@ config ENABLE_FREERTOS
 	help
 	  Enable freertos.
 
+config ENABLE_RTTHREAD
+	bool "Enable RTTHREAD"
+	depends on CHIP_ARCH_cv181x || CHIP_ARCH_cv180x
+	default n
+	help
+	  Enable rtthread.
+
 config ENABLE_RTOS_DUMP_PRINT
 	bool "Enable FREE RTOS DUMP PRINT MSG"
 	depends on ENABLE_FREERTOS

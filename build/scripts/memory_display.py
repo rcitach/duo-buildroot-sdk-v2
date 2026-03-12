@@ -6,6 +6,7 @@ import math
 import importlib.util
 import os
 import argparse
+import copy
 
 def import_class_from_path(file_path, class_name):
     if not os.path.isfile(file_path):
@@ -68,11 +69,16 @@ def display_all(memory_map_class):
     return data
 
 
-def sort_and_save_vertical_table(data, stage, output_filename):
+def sort_and_save_vertical_table(data_sour, stage, rtos, output_filename):
     def address_to_int(addr):
         if addr == "-":
             return float('-inf')
         return int(addr, 16)
+
+    data = copy.deepcopy(data_sour)
+    for item in data:
+        if item.get('Name') == 'RTOS':
+            item['Name'] = rtos.upper()
 
     data.sort(key=lambda x: address_to_int(x["Start Address"]))
 
@@ -108,25 +114,26 @@ def sort_and_save_vertical_table(data, stage, output_filename):
 
 
 def filter_first_stage(data):
-    prefixes = ("FREERTOS", "UIMAG", "MONITOR", "OPENSBI", "FSBL", "ALIOS")
+    prefixes = ("RTOS", "UIMAG", "MONITOR", "OPENSBI", "FSBL", "ALIOS")
     first_stage = [item for item in data if item["Name"].startswith(prefixes)]
     return first_stage
 
 
 def filter_second_stage(data):
-    prefixes = ("BOOTLOGO", "CVI_UPDATE", "UIMAG", "CVI_MMC_SKIP_TUNING", "CONFIG_SYS_INIT_SP", "MONITOR", "OPENSBI", "FREERTOS", "ALIOS")
+    prefixes = ("BOOTLOGO", "CVI_UPDATE", "UIMAG", "CVI_MMC_SKIP_TUNING", "CONFIG_SYS_INIT_SP", "MONITOR", "OPENSBI", "RTOS", "ALIOS")
     second_stage = [item for item in data if item["Name"].startswith(prefixes)]
     return second_stage
 
 
 def filter_third_stage(data):
-    prefixes = ("KERNEL", "MONITOR", "OPENSBI", "FREERTOS", "H26X", "ION",
+    prefixes = ("KERNEL", "MONITOR", "OPENSBI", "RTOS", "H26X", "ION",
                 "ISP", "FRAMEBUFFER", "ALIOS", "SHARE", "PQBIN")
     third_stage = [item for item in data if item["Name"].startswith(prefixes)]
     return third_stage
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Display memory map')
+    parser.add_argument("--rtos", choices=["freertos", "rtthread"], required=True)
     parser.add_argument('mem_path', type=str, help='The path to the .py file')
     parser.add_argument('out_path', type=str, help='The path to output file')
     return parser.parse_args()
@@ -141,13 +148,13 @@ def main():
         print(f"Successfully created an instance of '{class_name}' from '{args.mem_path}'.")
         data = display_all(my_instance)
         first_stage = filter_first_stage(data)
-        sort_and_save_vertical_table(first_stage, 1, args.out_path)
+        sort_and_save_vertical_table(first_stage, 1, args.rtos, args.out_path)
 
         second_stage = filter_second_stage(data)
-        sort_and_save_vertical_table(second_stage, 2, args.out_path)
+        sort_and_save_vertical_table(second_stage, 2, args.rtos, args.out_path)
 
         third_stage = filter_third_stage(data)
-        sort_and_save_vertical_table(third_stage, 3, args.out_path)
+        sort_and_save_vertical_table(third_stage, 3, args.rtos, args.out_path)
     except Exception as e:
         print(f"An error occurred: {e}")
 
