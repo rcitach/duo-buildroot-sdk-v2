@@ -23,6 +23,7 @@ endif
 
 rtos-clean:
 	$(call print_target)
+	rm -rf ${TOP_DIR}/build/output 2>/dev/null || true
 ifeq (${CONFIG_ENABLE_FREERTOS},y)
 	cd ${FREERTOS_PATH}/cvitek && rm -rf build install
 else ifeq ($(CONFIG_ENABLE_RTTHREAD),y)
